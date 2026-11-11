@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BOICOT TV+ · Abrir enlace</title>
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0c0d0f;color:#f4f1ea;font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:20px}
+.card{width:100%;max-width:420px;background:#15171b;border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:26px 22px;text-align:center}
+.marca{font-weight:900;font-size:26px;letter-spacing:.02em}
+.marca i{font-style:normal;background:#22c55e;color:#06140e;border-radius:6px;padding:0 7px;margin:0 3px}
+p{margin:12px 0;color:#c9ccd6}
+h1{font-size:22px;margin:18px 0 6px}
+.btn{display:block;width:100%;margin-top:12px;padding:15px;border-radius:14px;border:0;font:inherit;font-weight:800;font-size:17px;text-decoration:none;cursor:pointer}
+.p{background:#22c55e;color:#06140e}
+.s{background:transparent;color:#f4f1ea;border:1.5px solid rgba(255,255,255,.25)}
+small{display:block;margin-top:16px;color:#8b90a0}
+</style></head><body>
+<div class="card">
+  <div class="marca">BOICOT<i>TV</i>+</div>
+  <h1 id="titulo">Te compartieron algo</h1>
+  <p id="msg">Toca el botón para abrirlo en la app.</p>
+  <a id="abrir" class="btn p" href="#">Abrir en BOICOT TV+</a>
+  <button id="copiar" class="btn s" type="button">Copiar enlace de la app</button>
+  <small id="nota">Necesitas tener BOICOT TV+ instalada en este celular o TV.</small>
+</div>
+<script>
+(function () {
+  // Debe coincidir con el applicationId de la app (app/build.gradle.kts).
+  var PAQUETE = 'com.estebanruiz.boicottvplus208';
+  var q = new URLSearchParams(location.search);
+  var id = q.get('id') || '', t = q.get('t') || '', n = q.get('n') || '';
+  var d = document;
+  if (!id) { d.getElementById('titulo').textContent = 'Enlace incompleto'; d.getElementById('msg').textContent = 'Este enlace no trae ninguna película o serie.'; d.getElementById('abrir').style.display = 'none'; d.getElementById('copiar').style.display = 'none'; return; }
+  if (n) d.getElementById('titulo').textContent = n;
+  var resto = 'ficha?id=' + encodeURIComponent(id) + '&t=' + encodeURIComponent(t) + '&n=' + encodeURIComponent(n);
+  var directo = 'boicottvplus://' + resto;
+  var android = /android/i.test(navigator.userAgent);
+  var intento = 'intent://' + resto + '#Intent;scheme=boicottvplus;package=' + PAQUETE + ';end';
+  var abrir = d.getElementById('abrir');
+  abrir.href = android ? intento : directo;
+  d.getElementById('copiar').onclick = function () {
+    function listo() { d.getElementById('copiar').textContent = '¡Copiado!'; }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(directo).then(listo, function () { prompt('Copia este enlace:', directo); });
+    else prompt('Copia este enlace:', directo);
+  };
+  if (!android) d.getElementById('nota').textContent = 'Ábrelo desde el celular o la TV donde tengas BOICOT TV+ instalada.';
+  if (android) setTimeout(function () { location.href = intento; }, 400);   // intenta abrir la app solo
+})();
+</script>
+</body></html>
