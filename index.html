@@ -1,51 +1,76 @@
 <!DOCTYPE html>
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
 <title>BOICOT TV+ · Abrir enlace</title>
 <style>
 :root{color-scheme:dark}
 *{box-sizing:border-box}
-body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#0c0d0f;color:#f4f1ea;font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:20px}
-.card{width:100%;max-width:420px;background:#15171b;border:1px solid rgba(255,255,255,.12);border-radius:22px;padding:26px 22px;text-align:center}
-.marca{font-weight:900;font-size:26px;letter-spacing:.02em}
+html,body{height:100%}
+body{margin:0;background:#0b0d0c;color:#f4f1ea;font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden}
+#fondo{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;object-position:center top;opacity:0;transition:opacity .6s}
+#fondo.ok{opacity:1}
+.velo{position:fixed;inset:0;background:linear-gradient(180deg,rgba(8,12,10,.55) 0%,rgba(8,12,10,.25) 30%,rgba(8,12,10,.88) 72%,#0b0d0c 100%)}
+.pag{position:relative;z-index:1;min-height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:22px 22px 28px;max-width:560px;margin:0 auto}
+.marca{font-weight:900;font-size:26px;letter-spacing:.02em;text-shadow:0 2px 10px rgba(0,0,0,.6)}
 .marca i{font-style:normal;background:#22c55e;color:#06140e;border-radius:6px;padding:0 7px;margin:0 3px}
-p{margin:12px 0;color:#c9ccd6}
-h1{font-size:22px;margin:18px 0 6px}
-.btn{display:block;width:100%;margin-top:12px;padding:15px;border-radius:14px;border:0;font:inherit;font-weight:800;font-size:17px;text-decoration:none;cursor:pointer}
+.info{padding-bottom:4px}
+.eti{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#22c55e;margin-bottom:8px;text-shadow:0 1px 6px rgba(0,0,0,.7)}
+h1{margin:0 0 6px;font-size:clamp(28px,8vw,42px);line-height:1.1;font-weight:900;text-shadow:0 2px 14px rgba(0,0,0,.7);word-break:break-word}
+p{margin:0 0 16px;color:#d6d9d2;text-shadow:0 1px 8px rgba(0,0,0,.7)}
+.btn{display:block;width:100%;margin-top:10px;padding:15px;border-radius:14px;border:0;font:inherit;font-weight:800;font-size:17px;text-decoration:none;text-align:center;cursor:pointer}
 .p{background:#22c55e;color:#06140e}
-.s{background:transparent;color:#f4f1ea;border:1.5px solid rgba(255,255,255,.25)}
-small{display:block;margin-top:16px;color:#8b90a0}
+.s{background:rgba(10,14,12,.55);color:#f4f1ea;border:1.5px solid rgba(255,255,255,.3)}
+small{display:block;margin-top:14px;color:#aab0a8;text-align:center;text-shadow:0 1px 6px rgba(0,0,0,.7)}
 </style></head><body>
-<div class="card">
+<img id="fondo" alt="" referrerpolicy="no-referrer">
+<div class="velo"></div>
+<div class="pag">
   <div class="marca">BOICOT<i>TV</i>+</div>
-  <h1 id="titulo">Te compartieron algo</h1>
-  <p id="msg">Toca el botón para abrirlo en la app.</p>
-  <a id="abrir" class="btn p" href="#">Abrir en BOICOT TV+</a>
-  <button id="copiar" class="btn s" type="button">Copiar enlace de la app</button>
-  <small id="nota">Necesitas tener BOICOT TV+ instalada en este celular o TV.</small>
+  <div class="info">
+    <span class="eti" id="eti">Te compartieron algo</span>
+    <h1 id="titulo">BOICOT TV+</h1>
+    <p id="msg">Toca el botón para abrirlo en la app.</p>
+    <a id="abrir" class="btn p" href="#">Abrir en BOICOT TV+</a>
+    <button id="copiar" class="btn s" type="button">Copiar enlace de la app</button>
+    <small id="nota">Necesitas tener BOICOT TV+ instalada en este celular o TV.</small>
+  </div>
 </div>
 <script>
 (function () {
   // Debe coincidir con el applicationId de la app (app/build.gradle.kts).
   var PAQUETE = 'com.estebanruiz.boicottvplus208';
   var q = new URLSearchParams(location.search);
-  var id = q.get('id') || '', t = q.get('t') || '', n = q.get('n') || '';
+  var id = q.get('id') || '', t = q.get('t') || '', n = q.get('n') || '', b = q.get('b') || '';
   var d = document;
-  if (!id) { d.getElementById('titulo').textContent = 'Enlace incompleto'; d.getElementById('msg').textContent = 'Este enlace no trae ninguna película o serie.'; d.getElementById('abrir').style.display = 'none'; d.getElementById('copiar').style.display = 'none'; return; }
-  if (n) d.getElementById('titulo').textContent = n;
+  if (!id) {
+    d.getElementById('eti').textContent = 'Enlace incompleto';
+    d.getElementById('titulo').textContent = 'BOICOT TV+';
+    d.getElementById('msg').textContent = 'Este enlace no trae ninguna película o serie.';
+    d.getElementById('abrir').style.display = 'none'; d.getElementById('copiar').style.display = 'none';
+    return;
+  }
+  if (n) { d.getElementById('titulo').textContent = n; d.title = n + ' · BOICOT TV+'; }
+  d.getElementById('eti').textContent = 'Te compartieron en BOICOT TV+';
+  d.getElementById('msg').textContent = 'Toca el botón para abrirlo en la app.';
+  // Fondo: la imagen de la película (solo https, sin enviar referer)
+  if (/^https:\/\//i.test(b) && b.length < 400) {
+    var im = d.getElementById('fondo');
+    im.onload = function () { im.className = 'ok'; };
+    im.onerror = function () { im.style.display = 'none'; };
+    im.src = b;
+  }
   var resto = 'ficha?id=' + encodeURIComponent(id) + '&t=' + encodeURIComponent(t) + '&n=' + encodeURIComponent(n);
   var directo = 'boicottvplus://' + resto;
   var android = /android/i.test(navigator.userAgent);
   var intento = 'intent://' + resto + '#Intent;scheme=boicottvplus;package=' + PAQUETE + ';end';
-  var abrir = d.getElementById('abrir');
-  abrir.href = android ? intento : directo;
+  d.getElementById('abrir').href = android ? intento : directo;   // no se abre solo: se abre al tocar el botón
   d.getElementById('copiar').onclick = function () {
     function listo() { d.getElementById('copiar').textContent = '¡Copiado!'; }
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(directo).then(listo, function () { prompt('Copia este enlace:', directo); });
     else prompt('Copia este enlace:', directo);
   };
   if (!android) d.getElementById('nota').textContent = 'Ábrelo desde el celular o la TV donde tengas BOICOT TV+ instalada.';
-  if (android) setTimeout(function () { location.href = intento; }, 400);   // intenta abrir la app solo
 })();
 </script>
 </body></html>
