@@ -2,61 +2,75 @@
 <html lang="es"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#06140e">
 <title>BOICOT TV+ · Abrir enlace</title>
 <style>
-:root{color-scheme:dark}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{margin:0;background:#0b0d0c;color:#f4f1ea;font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  background-image:radial-gradient(circle at 50% 0%,#182420,#0b0d0c 65%)}
-.pag{position:relative;min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:space-between;
-  padding:26px 22px 28px;max-width:420px;margin:0 auto;gap:22px}
-.marca{font-weight:900;font-size:24px;letter-spacing:.02em;text-shadow:0 2px 10px rgba(0,0,0,.6)}
-.marca i{font-style:normal;background:#22c55e;color:#06140e;border-radius:6px;padding:0 7px;margin:0 3px}
+/* Los colores salen del tema que tiene elegido quien comparte (el enlace trae &c=acento &k=fondo &x=texto); estos son los de respaldo. */
+:root{--bg:#06140e;--card:#0d261a;--ac:#22c55e;--sobre:#06140e;--tx:#f4f1ea;--mut:rgba(244,241,234,.68);--line:rgba(244,241,234,.18)}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%}
+body{margin:0;background:var(--bg);color:var(--tx);overflow-x:hidden;
+  font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 
-/* ---- "estuche" de videojuego: caratula completa (sin recortar, contain) + lomo con la marca ---- */
-#estuche{position:relative;width:min(78vw,320px);filter:drop-shadow(0 20px 46px rgba(0,0,0,.65))}
-#caja{position:relative;width:100%;aspect-ratio:2/3;border-radius:10px;background:#101312;
-  border:1px solid rgba(255,255,255,.14);overflow:hidden;display:flex;align-items:center;justify-content:center}
-#caja.sin-caratula{display:none}
-#caratula{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block;opacity:0;transition:opacity .5s}
+/* fondo: la misma carátula muy desenfocada (solo ambiente; la carátula de verdad va completa en el recuadro) */
+#fondo{position:fixed;inset:-60px;z-index:0;background-size:cover;background-position:center;
+  filter:blur(42px) saturate(1.25);transform:scale(1.15);opacity:0;transition:opacity .8s}
+#fondo.ok{opacity:.42}
+#velo{position:fixed;inset:0;z-index:0;
+  background:radial-gradient(130% 85% at 50% 0%,transparent 0%,var(--bg) 82%),linear-gradient(180deg,transparent 55%,var(--bg))}
+
+.pag{position:relative;z-index:1;min-height:100vh;width:100%;max-width:460px;margin:0 auto;
+  padding:calc(22px + env(safe-area-inset-top)) 20px calc(26px + env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px}
+
+.marca{font-weight:900;font-size:22px;letter-spacing:.03em}
+.marca i{font-style:normal;background:var(--ac);color:var(--sobre);border-radius:6px;padding:0 7px;margin:0 3px}
+
+/* recuadro CUADRADO con la carátula completa dentro (sin recortar) */
+#cuadro{position:relative;width:min(84vw,360px);aspect-ratio:1/1;border-radius:28px;
+  background:linear-gradient(155deg,var(--card),var(--bg));
+  border:1.5px solid var(--line);
+  box-shadow:0 26px 64px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.25),0 0 46px -10px var(--ac);
+  animation:entra .6s cubic-bezier(.2,.8,.2,1) both}
+#marco{position:absolute;inset:16px;display:flex;align-items:center;justify-content:center}
+#caratula{max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block;
+  border-radius:12px;box-shadow:0 14px 34px rgba(0,0,0,.6);opacity:0;transition:opacity .5s}
 #caratula.ok{opacity:1}
-#lomo{position:absolute;top:0;bottom:0;left:-15px;width:15px;border-radius:9px 0 0 9px;
-  background:linear-gradient(180deg,#1a3127,#0c1b15);border:1px solid rgba(255,255,255,.14);border-right:0;
-  display:flex;align-items:center;justify-content:center}
-#lomo span{display:block;writing-mode:vertical-rl;transform:rotate(180deg);font-weight:900;font-size:11px;
-  letter-spacing:.14em;color:#8fcca5;white-space:nowrap}
-#brillo{position:absolute;inset:0;border-radius:10px;pointer-events:none;
-  background:linear-gradient(115deg,rgba(255,255,255,.14) 0%,rgba(255,255,255,0) 30%)}
-#sinimg{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;
-  padding:18px;font-weight:800;color:#8fcca5;background:linear-gradient(145deg,#152821,#0c1511)}
-#caja.sin-caratula #sinimg{display:flex}
+#sinimg{position:absolute;inset:16px;display:none;align-items:center;justify-content:center;text-align:center;
+  border-radius:14px;font-weight:900;font-size:26px;letter-spacing:.04em;color:var(--ac);border:1.5px dashed var(--line)}
+#cuadro.sin #sinimg{display:flex}
+#cuadro.sin #caratula{display:none}
+@keyframes entra{from{opacity:0;transform:translateY(16px) scale(.97)}to{opacity:1;transform:none}}
 
-.info{text-align:center;max-width:460px}
-.eti{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#22c55e;margin-bottom:8px}
-h1{margin:0 0 6px;font-size:clamp(22px,7vw,30px);line-height:1.15;font-weight:900;word-break:break-word}
-p{margin:0;color:#aeb3ac}
-.botones{width:100%;max-width:420px}
-.btn{display:block;width:100%;margin-top:10px;padding:15px;border-radius:14px;border:0;font:inherit;font-weight:800;font-size:17px;text-decoration:none;text-align:center;cursor:pointer}
-.p{background:#22c55e;color:#06140e}
-.s{background:rgba(255,255,255,.08);color:#f4f1ea;border:1.5px solid rgba(255,255,255,.3)}
-small{display:block;margin-top:14px;color:#aab0a8;text-align:center}
+.info{text-align:center;width:100%}
+.eti{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--ac);margin-bottom:8px}
+h1{margin:0 0 8px;font-size:clamp(24px,7.4vw,32px);line-height:1.12;font-weight:900;word-break:break-word}
+.chip{display:inline-block;margin-bottom:10px;padding:3px 12px;border-radius:999px;font-size:13px;font-weight:700;
+  border:1.5px solid var(--ac);color:var(--tx)}
+#msg{margin:0;color:var(--mut)}
+
+.botones{width:100%}
+.btn{display:block;width:100%;margin-top:10px;padding:16px;border-radius:16px;border:0;font:inherit;font-weight:800;font-size:17px;
+  text-decoration:none;text-align:center;cursor:pointer;transition:transform .12s,filter .12s}
+.btn:active{transform:scale(.98)}
+.p{background:var(--ac);color:var(--sobre);box-shadow:0 10px 26px -8px var(--ac)}
+.s{background:transparent;color:var(--tx);border:1.5px solid var(--line)}
+small{display:block;margin-top:14px;color:var(--mut);text-align:center;font-size:13px}
+@media (max-height:640px){.pag{justify-content:flex-start}}
 </style></head><body>
+<div id="fondo"></div><div id="velo"></div>
 <div class="pag">
   <div class="marca">BOICOT<i>TV</i>+</div>
 
-  <div id="estuche">
-    <div id="caja">
-      <div id="lomo"><span>BOICOT TV+</span></div>
-      <img id="caratula" alt="">
-      <div id="sinimg">BOICOT<br>TV+</div>
-      <div id="brillo"></div>
-    </div>
+  <div id="cuadro">
+    <div id="marco"><img id="caratula" alt=""></div>
+    <div id="sinimg">BOICOT<br>TV+</div>
   </div>
 
   <div class="info">
     <span class="eti" id="eti">Te compartieron algo</span>
     <h1 id="titulo">BOICOT TV+</h1>
+    <span class="chip" id="chip" hidden></span>
     <p id="msg">Toca el botón para abrirlo en la app.</p>
   </div>
 
@@ -72,28 +86,61 @@ small{display:block;margin-top:14px;color:#aab0a8;text-align:center}
   var PAQUETE = 'com.estebanruiz.boicottvplus208';
   var q = new URLSearchParams(location.search);
   var id = q.get('id') || '', t = q.get('t') || '', n = q.get('n') || '', b = q.get('b') || '';
-  var d = document;
+  var d = document, raiz = d.documentElement.style;
+
+  // ---- colores del tema de quien compartió ----
+  function hex(v) { return /^[0-9a-f]{6}$/i.test(v || '') ? v.toLowerCase() : ''; }
+  function rgb(h) { return [parseInt(h.substr(0, 2), 16), parseInt(h.substr(2, 2), 16), parseInt(h.substr(4, 2), 16)]; }
+  function css(c) { return 'rgb(' + Math.round(c[0]) + ',' + Math.round(c[1]) + ',' + Math.round(c[2]) + ')'; }
+  function mezcla(a, z, p) { return [a[0] + (z[0] - a[0]) * p, a[1] + (z[1] - a[1]) * p, a[2] + (z[2] - a[2]) * p]; }
+  function lum(c) { return (0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2]) / 255; }
+  var hc = hex(q.get('c')), hk = hex(q.get('k')), hx = hex(q.get('x'));
+  if (hk) {
+    var bg = rgb(hk), claro = lum(bg) > 0.55;
+    raiz.setProperty('--bg', css(bg));
+    raiz.setProperty('--card', css(mezcla(bg, claro ? [0, 0, 0] : [255, 255, 255], claro ? 0.06 : 0.08)));
+    var meta = d.querySelector('meta[name=theme-color]'); if (meta) meta.setAttribute('content', css(bg));
+    if (!hx) hx = claro ? '121212' : 'f4f1ea';
+  }
+  if (hx) {
+    var tx = rgb(hx);
+    raiz.setProperty('--tx', css(tx));
+    raiz.setProperty('--mut', 'rgba(' + tx.map(Math.round).join(',') + ',.68)');
+    raiz.setProperty('--line', 'rgba(' + tx.map(Math.round).join(',') + ',.2)');
+  }
+  if (hc) {
+    var ac = rgb(hc);
+    raiz.setProperty('--ac', css(ac));
+    raiz.setProperty('--sobre', lum(ac) > 0.45 ? (hk ? '#' + hk : '#0b0d0c') : '#ffffff');
+  }
+
+  // ---- contenido ----
   if (!id) {
     d.getElementById('eti').textContent = 'Enlace incompleto';
-    d.getElementById('titulo').textContent = 'BOICOT TV+';
     d.getElementById('msg').textContent = 'Este enlace no trae ninguna película o serie.';
     d.getElementById('abrir').style.display = 'none'; d.getElementById('copiar').style.display = 'none';
-    d.getElementById('caja').className = 'sin-caratula';
+    d.getElementById('cuadro').className = 'sin';
     return;
   }
   if (n) { d.getElementById('titulo').textContent = n; d.title = n + ' · BOICOT TV+'; }
   d.getElementById('eti').textContent = 'Te compartieron en BOICOT TV+';
-  d.getElementById('msg').textContent = 'Toca el botón para abrirlo en la app.';
-  // Caratula: la imagen de la pelicula, completa y sin recortar (object-fit: contain), como la portada de un estuche.
-  var caja = d.getElementById('caja');
-  if (/^https:\/\//i.test(b) && b.length < 400) {
+  var tipo = /anime/i.test(t) ? 'Anime' : /serie|series|tv|show/i.test(t) ? 'Serie' : /pel|movie|film/i.test(t) ? 'Película' : '';
+  if (tipo) { var chip = d.getElementById('chip'); chip.textContent = tipo; chip.hidden = false; }
+
+  // Carátula: completa y sin recortar dentro del recuadro cuadrado; la misma imagen, desenfocada, hace de fondo.
+  var cuadro = d.getElementById('cuadro');
+  if (/^https:\/\//i.test(b) && b.length < 420) {
     var im = d.getElementById('caratula');
-    im.onload = function () { im.className = 'ok'; };
-    im.onerror = function () { caja.className = 'sin-caratula'; };
+    im.onload = function () {
+      im.className = 'ok';
+      var f = d.getElementById('fondo'); f.style.backgroundImage = 'url("' + b.replace(/"/g, '%22') + '")'; f.className = 'ok';
+    };
+    im.onerror = function () { cuadro.className = 'sin'; };
     im.src = b;
   } else {
-    caja.className = 'sin-caratula';
+    cuadro.className = 'sin';
   }
+
   var resto = 'ficha?id=' + encodeURIComponent(id) + '&t=' + encodeURIComponent(t) + '&n=' + encodeURIComponent(n);
   var directo = 'boicottvplus://' + resto;
   var android = /android/i.test(navigator.userAgent);
